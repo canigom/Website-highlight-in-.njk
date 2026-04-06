@@ -1,0 +1,752 @@
+<style>
+  /* ═══════════════════════════════════════════
+     HIGHLIGHTS — BENTO GRID SECTION
+  ═══════════════════════════════════════════ */
+  .hl-section { background: #090909; padding: 0 0 100px; }
+  .hl-section .container { max-width: 1100px; }
+
+  .hl-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "globe  payments payments"
+      "settings settings notifs"
+      "support support support";
+    gap: 12px;
+  }
+  @media (max-width: 860px) {
+    .hl-grid {
+      grid-template-columns: 1fr;
+      grid-template-areas: "globe" "payments" "settings" "notifs" "support";
+    }
+  }
+
+  .hl-card {
+    background: #0d0d10;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.3s ease;
+  }
+  .hl-card:hover { border-color: rgba(255,255,255,0.13); }
+
+  .hl-globe-card    { grid-area: globe; }
+  .hl-payments-card { grid-area: payments; display: flex; flex-direction: column; }
+  .hl-settings-card { grid-area: settings; }
+  .hl-notifs-card   { grid-area: notifs; }
+  .hl-support-card  { grid-area: support; }
+
+  .hl-label { padding: 16px 20px 20px; }
+  .hl-label h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin: 0 0 5px; letter-spacing: -0.01em; }
+  .hl-label p  { font-size: 0.79rem; color: rgba(255,255,255,0.38); line-height: 1.55; margin: 0; }
+
+  /* ─── GLOBE ─── */
+  .hl-globe-wrap {
+    height: 220px; display: flex; align-items: center; justify-content: center;
+    position: relative; cursor: grab; user-select: none;
+  }
+  .hl-globe-wrap:active { cursor: grabbing; }
+  #hlGlobe { position: relative; z-index: 1; }
+  .hl-globe-glow {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(80,100,255,0.13) 0%, transparent 60%);
+  }
+
+  /* ─── PAYMENTS ─── */
+  .hl-pay-area {
+    flex: 1; padding: 18px 0 6px; overflow: hidden;
+    position: relative; display: flex; flex-direction: column;
+    justify-content: center; gap: 10px;
+  }
+  .hl-pay-area::before, .hl-pay-area::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 70px; z-index: 2; pointer-events: none;
+  }
+  .hl-pay-area::before { left: 0;  background: linear-gradient(to right, #0d0d10, transparent); }
+  .hl-pay-area::after  { right: 0; background: linear-gradient(to left,  #0d0d10, transparent); }
+
+  .hl-pay-row { display: flex; gap: 10px; width: max-content; }
+  .hl-pay-row-1 { animation: hl-lft 24s linear infinite; }
+  .hl-pay-row-2 { animation: hl-rgt 30s linear infinite; }
+  .hl-pay-row-1:hover, .hl-pay-row-2:hover { animation-play-state: paused; }
+  @keyframes hl-lft { from { transform: translateX(0); }     to { transform: translateX(-50%); } }
+  @keyframes hl-rgt { from { transform: translateX(-50%); }  to { transform: translateX(0); } }
+
+  .hl-pay-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .hl-pay-icon:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+  .hl-pay-icon svg { width: 24px; height: 24px; opacity: 0.6; }
+
+  /* ─── SETTINGS ─── */
+  .hl-settings-inner { display: flex; gap: 0; padding: 20px 20px 0; height: 100%; }
+  .hl-settings-text { flex-shrink: 0; width: 148px; padding-right: 16px; }
+  .hl-settings-text h3 { font-size: 1rem; font-weight: 700; color: #fff; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .hl-settings-text p  { font-size: 0.77rem; color: rgba(255,255,255,0.38); line-height: 1.55; margin: 0; }
+
+  .hl-settings-frame {
+    flex: 1; background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07); border-bottom: none;
+    border-radius: 12px 12px 0 0; overflow: hidden; display: flex; min-height: 210px;
+  }
+
+  .hl-s-sidebar { width: 118px; flex-shrink: 0; border-right: 1px solid rgba(255,255,255,0.06); padding: 8px 0; }
+  .hl-s-tab {
+    display: flex; align-items: center; gap: 6px; padding: 7px 10px;
+    font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,0.35);
+    cursor: pointer; transition: background 0.15s, color 0.15s; user-select: none;
+  }
+  .hl-s-tab:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.6); }
+  .hl-s-tab.active { background: rgba(99,102,241,0.12); color: #818cf8; font-weight: 600; }
+  .hl-s-tab svg { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.7; }
+  .hl-s-tab.active svg { opacity: 1; }
+
+  .hl-s-main { flex: 1; padding: 10px 12px; overflow: hidden; }
+  .hl-s-panel { display: none; animation: hl-fi 0.18s ease; height: 100%; }
+  .hl-s-panel.active { display: flex; flex-direction: column; }
+  @keyframes hl-fi { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+  .hl-s-panel-head { font-size: 0.76rem; font-weight: 700; color: rgba(255,255,255,0.75); margin-bottom: 2px; }
+  .hl-s-panel-sub  { font-size: 0.63rem; color: rgba(255,255,255,0.28); margin-bottom: 6px; }
+  .hl-s-divider    { height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 6px; }
+
+  /* Controls + player model side by side */
+  .hl-s-body { display: flex; gap: 8px; flex: 1; min-height: 0; }
+  .hl-s-controls { flex: 1; }
+
+  .hl-s-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
+  .hl-s-group-lbl {
+    font-size: 0.58rem; font-weight: 700; color: rgba(255,255,255,0.25);
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px;
+  }
+  .hl-s-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .hl-s-row-lbl { font-size: 0.63rem; color: rgba(255,255,255,0.4); }
+
+  /* Toggle */
+  .hl-toggle {
+    width: 26px; height: 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.1); position: relative;
+    cursor: pointer; flex-shrink: 0; transition: background 0.2s;
+  }
+  .hl-toggle::after {
+    content: ''; position: absolute; width: 10px; height: 10px;
+    border-radius: 50%; background: rgba(255,255,255,0.35); top: 2px; left: 2px;
+    transition: left 0.2s, background 0.2s;
+  }
+  .hl-toggle.on { background: #6366f1; }
+  .hl-toggle.on::after { left: 14px; background: #fff; }
+
+  /* Player model preview */
+  .hl-player-preview {
+    width: 90px; flex-shrink: 0;
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .hl-player-preview::before {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+  }
+  .hl-player-preview svg { width: 100%; height: 100%; }
+
+  /* Non-visuals panel layout */
+  .hl-s-generic { flex: 1; }
+
+  /* ─── NOTIFICATIONS ─── */
+  .hl-notifs-top { padding: 14px 14px 0; display: flex; flex-direction: column; gap: 8px; }
+
+  @keyframes hl-notif-float {
+    0%, 100% { transform: translateY(0px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    50%       { transform: translateY(-6px); box-shadow: 0 10px 22px rgba(0,0,0,0.35); }
+  }
+  .hl-notifs-top .hl-notif:nth-child(1) { animation: hl-notif-float 3.2s ease-in-out infinite; }
+  .hl-notifs-top .hl-notif:nth-child(2) { animation: hl-notif-float 3.2s ease-in-out infinite 1.07s; }
+  .hl-notifs-top .hl-notif:nth-child(3) { animation: hl-notif-float 3.2s ease-in-out infinite 2.14s; }
+
+  .hl-notif {
+    display: flex; align-items: flex-start; gap: 9px;
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 11px; padding: 10px 11px;
+    transition: background 0.2s, border-color 0.2s; cursor: default;
+  }
+  .hl-notif:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.13); }
+  .hl-notif.faded { opacity: 0.35; animation: none !important; pointer-events: none; }
+
+  .hl-notif-av {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.25);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .hl-notif-av.green { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.25); }
+  .hl-notif-av svg { width: 12px; height: 12px; color: #818cf8; }
+  .hl-notif-av.green svg { color: #22c55e; }
+
+  .hl-notif-body { flex: 1; min-width: 0; }
+  .hl-notif-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 2px; }
+  .hl-notif-title { font-size: 0.74rem; font-weight: 700; color: rgba(255,255,255,0.85); }
+  .hl-notif-time  { font-size: 0.62rem; color: rgba(255,255,255,0.25); white-space: nowrap; flex-shrink: 0; }
+  .hl-notif-desc  { font-size: 0.67rem; color: rgba(255,255,255,0.35); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ─── SUPPORT ─── */
+  .hl-support-card {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 52px 24px; text-align: center;
+  }
+  .hl-sup-num {
+    font-size: clamp(3.5rem, 9vw, 5.5rem); font-weight: 900;
+    line-height: 0.9; letter-spacing: -0.05em;
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 40%, #6366f1 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hl-sup-word { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: 0.14em; color: #fff; margin-bottom: 30px; }
+  .hl-sup-btns { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  .hl-btn {
+    display: inline-flex; align-items: center; gap: 7px; font-weight: 700;
+    font-size: 0.84rem; padding: 11px 22px; border-radius: 10px;
+    text-decoration: none; transition: all 0.2s ease;
+    letter-spacing: 0.01em; white-space: nowrap; cursor: pointer; border: none;
+  }
+  .hl-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .hl-btn-primary { background: #6366f1; color: #fff; border: 1px solid transparent; }
+  .hl-btn-primary:hover { background: #4f46e5; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.35); }
+  .hl-btn-secondary { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.1); }
+  .hl-btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: #fff; transform: translateY(-2px); }
+</style>
+
+<section class="hl-section component" data-component-id="{{ componentId }}">
+  <div class="container">
+    <div class="hl-grid">
+
+      <!-- ════════════════════════
+           GLOBE CARD
+           ════════════════════════ -->
+      <div class="hl-card hl-globe-card">
+        <div class="hl-globe-wrap" id="hlGlobeWrap">
+          <div class="hl-globe-glow"></div>
+          <canvas id="hlGlobe" width="200" height="200"></canvas>
+        </div>
+        <div class="hl-label">
+          <h3>Active Community</h3>
+          <p>Join over 50k satisfied customers and be part of our growing community.</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════
+           PAYMENTS CARD
+           ════════════════════════ -->
+      <div class="hl-card hl-payments-card">
+        <div class="hl-pay-area">
+
+          <!-- Row 1 → scrolls left (16 icons = 8 unique + 8 duplicates) -->
+          <div class="hl-pay-row hl-pay-row-1">
+            <!-- Set A -->
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M7.076 21.337H2.47a.64.64 0 0 1-.633-.74L4.944.9C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.93.93 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 38 24" fill="none"><circle cx="15" cy="12" r="9" fill="rgba(255,255,255,0.5)"/><circle cx="23" cy="12" r="9" fill="rgba(255,255,255,0.3)"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 60 20" fill="rgba(255,255,255,0.75)"><text x="0" y="16" font-size="17" font-family="Arial" font-weight="900" letter-spacing="2">VISA</text></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.372 0 12c0 .946.113 1.866.316 2.75h3.792v-8.23l7.892 7.892 7.892-7.892v8.23h3.792A12.04 12.04 0 0 0 24 12C24 5.372 18.627 0 12 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M20.9 4.252L3.6.024l6.396 19.338.617 1.868L20.9 4.252zM8.12 5.67l8.14 1.85-6.17 5.347L8.12 5.67zm1.457 8.49l5.944-5.148-4.208 9.485-1.736-4.337z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-.252 5.338h2.522l-1.33 4.797.914-.296-.384 1.46-.924.3L11.1 18.662H6.732l1.744-6.548-.908.296.384-1.46.918-.3 1.878-5.312z"/></svg></div>
+            <!-- Set B (duplicate) -->
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M7.076 21.337H2.47a.64.64 0 0 1-.633-.74L4.944.9C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.93.93 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 38 24" fill="none"><circle cx="15" cy="12" r="9" fill="rgba(255,255,255,0.5)"/><circle cx="23" cy="12" r="9" fill="rgba(255,255,255,0.3)"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 60 20" fill="rgba(255,255,255,0.75)"><text x="0" y="16" font-size="17" font-family="Arial" font-weight="900" letter-spacing="2">VISA</text></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.372 0 12c0 .946.113 1.866.316 2.75h3.792v-8.23l7.892 7.892 7.892-7.892v8.23h3.792A12.04 12.04 0 0 0 24 12C24 5.372 18.627 0 12 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M20.9 4.252L3.6.024l6.396 19.338.617 1.868L20.9 4.252zM8.12 5.67l8.14 1.85-6.17 5.347L8.12 5.67zm1.457 8.49l5.944-5.148-4.208 9.485-1.736-4.337z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-.252 5.338h2.522l-1.33 4.797.914-.296-.384 1.46-.924.3L11.1 18.662H6.732l1.744-6.548-.908.296.384-1.46.918-.3 1.878-5.312z"/></svg></div>
+          </div>
+
+          <!-- Row 2 → scrolls right (different order) -->
+          <div class="hl-pay-row hl-pay-row-2">
+            <!-- Set A -->
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.372 0 12c0 .946.113 1.866.316 2.75h3.792v-8.23l7.892 7.892 7.892-7.892v8.23h3.792A12.04 12.04 0 0 0 24 12C24 5.372 18.627 0 12 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M20.9 4.252L3.6.024l6.396 19.338.617 1.868L20.9 4.252zM8.12 5.67l8.14 1.85-6.17 5.347L8.12 5.67zm1.457 8.49l5.944-5.148-4.208 9.485-1.736-4.337z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-.252 5.338h2.522l-1.33 4.797.914-.296-.384 1.46-.924.3L11.1 18.662H6.732l1.744-6.548-.908.296.384-1.46.918-.3 1.878-5.312z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 38 24" fill="none"><circle cx="15" cy="12" r="9" fill="rgba(255,255,255,0.5)"/><circle cx="23" cy="12" r="9" fill="rgba(255,255,255,0.3)"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 60 20" fill="rgba(255,255,255,0.75)"><text x="0" y="16" font-size="17" font-family="Arial" font-weight="900" letter-spacing="2">VISA</text></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M7.076 21.337H2.47a.64.64 0 0 1-.633-.74L4.944.9C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.93.93 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg></div>
+            <!-- Set B -->
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.372 0 12c0 .946.113 1.866.316 2.75h3.792v-8.23l7.892 7.892 7.892-7.892v8.23h3.792A12.04 12.04 0 0 0 24 12C24 5.372 18.627 0 12 0z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M20.9 4.252L3.6.024l6.396 19.338.617 1.868L20.9 4.252zM8.12 5.67l8.14 1.85-6.17 5.347L8.12 5.67zm1.457 8.49l5.944-5.148-4.208 9.485-1.736-4.337z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-.252 5.338h2.522l-1.33 4.797.914-.296-.384 1.46-.924.3L11.1 18.662H6.732l1.744-6.548-.908.296.384-1.46.918-.3 1.878-5.312z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 38 24" fill="none"><circle cx="15" cy="12" r="9" fill="rgba(255,255,255,0.5)"/><circle cx="23" cy="12" r="9" fill="rgba(255,255,255,0.3)"/></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 60 20" fill="rgba(255,255,255,0.75)"><text x="0" y="16" font-size="17" font-family="Arial" font-weight="900" letter-spacing="2">VISA</text></svg></div>
+            <div class="hl-pay-icon"><svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M7.076 21.337H2.47a.64.64 0 0 1-.633-.74L4.944.9C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.93.93 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg></div>
+          </div>
+        </div>
+        <div class="hl-label">
+          <h3>Secure Payments</h3>
+          <p>We use trusted payment gateways to ensure your transactions are safe.</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════
+           SETTINGS CARD
+           ════════════════════════ -->
+      <div class="hl-card hl-settings-card">
+        <div class="hl-settings-inner">
+          <div class="hl-settings-text">
+            <h3>Advanced Settings</h3>
+            <p>Customize your experience with our powerful configuration panel.</p>
+          </div>
+          <div class="hl-settings-frame">
+            <!-- Sidebar tabs -->
+            <div class="hl-s-sidebar" id="hlSTabs">
+              <div class="hl-s-tab active" data-panel="visuals">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg>Visuals
+              </div>
+              <div class="hl-s-tab" data-panel="settings">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4l3 3"/></svg>Settings
+              </div>
+              <div class="hl-s-tab" data-panel="players">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Players
+              </div>
+              <div class="hl-s-tab" data-panel="gadgets">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>Gadgets
+              </div>
+              <div class="hl-s-tab" data-panel="radar">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>Radar
+              </div>
+            </div>
+            <!-- Panels -->
+            <div class="hl-s-main">
+
+              <!-- VISUALS (with player model) -->
+              <div class="hl-s-panel active" id="hlPanel-visuals">
+                <div class="hl-s-panel-head">Visuals</div>
+                <div class="hl-s-panel-sub">Visual Effects</div>
+                <div class="hl-s-divider"></div>
+                <div class="hl-s-body">
+                  <div class="hl-s-controls">
+                    <div class="hl-s-cols">
+                      <div>
+                        <div class="hl-s-group-lbl">ESP Boxes</div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">2D Boxes</span>    <div class="hl-toggle on"  data-esp="box2d"></div></div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">3D Boxes</span>    <div class="hl-toggle"     data-esp="box3d"></div></div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">Corner Boxes</span><div class="hl-toggle"     data-esp="corner"></div></div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">Skeleton</span>    <div class="hl-toggle on"  data-esp="skel"></div></div>
+                      </div>
+                      <div>
+                        <div class="hl-s-group-lbl">Colors</div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">Enemy Color</span>   <div class="hl-toggle on"></div></div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">Team Color</span>    <div class="hl-toggle"></div></div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">Skeleton Col.</span> <div class="hl-toggle on"></div></div>
+                        <div class="hl-s-row"><span class="hl-s-row-lbl">Loot Color</span>    <div class="hl-toggle"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Live player model -->
+                  <div class="hl-player-preview" id="hlPlayerPreview">
+                    <svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+                      <!-- Player silhouette -->
+                      <g stroke="rgba(255,255,255,0.5)" fill="none" stroke-linecap="round">
+                        <ellipse cx="50" cy="20" rx="9" ry="10" stroke-width="1.4"/>
+                        <line x1="50" y1="30" x2="50" y2="36" stroke-width="1.4"/>
+                        <rect x="34" y="36" width="32" height="34" rx="3" stroke-width="1.4"/>
+                        <line x1="34" y1="42" x2="21" y2="58" stroke-width="1.4"/>
+                        <line x1="21" y1="58" x2="17" y2="72" stroke-width="1.4"/>
+                        <line x1="66" y1="42" x2="79" y2="58" stroke-width="1.4"/>
+                        <line x1="79" y1="58" x2="83" y2="72" stroke-width="1.4"/>
+                        <line x1="34" y1="70" x2="66" y2="70" stroke-width="1.2"/>
+                        <line x1="42" y1="70" x2="37" y2="100" stroke-width="1.4"/>
+                        <line x1="37" y1="100" x2="33" y2="130" stroke-width="1.4"/>
+                        <line x1="58" y1="70" x2="63" y2="100" stroke-width="1.4"/>
+                        <line x1="63" y1="100" x2="67" y2="130" stroke-width="1.4"/>
+                        <line x1="27" y1="130" x2="39" y2="130" stroke-width="1.4"/>
+                        <line x1="61" y1="130" x2="73" y2="130" stroke-width="1.4"/>
+                      </g>
+                      <!-- 2D Box overlay (default ON) -->
+                      <rect id="hlEspBox2d" x="12" y="8" width="76" height="136"
+                        stroke="#22c55e" stroke-width="1.8" fill="none" opacity="0.95"/>
+                      <!-- 3D Box overlay (default OFF) -->
+                      <g id="hlEspBox3d" style="display:none">
+                        <rect x="12" y="8" width="76" height="136" stroke="#60a5fa" stroke-width="1.6" fill="none"/>
+                        <rect x="20" y="3" width="76" height="136" stroke="rgba(96,165,250,0.4)" stroke-width="1" fill="none"/>
+                        <line x1="12" y1="8"   x2="20" y2="3"   stroke="rgba(96,165,250,0.5)" stroke-width="1"/>
+                        <line x1="88" y1="8"   x2="96" y2="3"   stroke="rgba(96,165,250,0.5)" stroke-width="1"/>
+                        <line x1="12" y1="144" x2="20" y2="139" stroke="rgba(96,165,250,0.5)" stroke-width="1"/>
+                        <line x1="88" y1="144" x2="96" y2="139" stroke="rgba(96,165,250,0.5)" stroke-width="1"/>
+                      </g>
+                      <!-- Corner Boxes (default OFF) -->
+                      <g id="hlEspCorner" stroke="#f59e0b" stroke-width="2.2" fill="none" style="display:none">
+                        <path d="M12,24 L12,8 L26,8"/>
+                        <path d="M74,8 L88,8 L88,24"/>
+                        <path d="M12,128 L12,144 L26,144"/>
+                        <path d="M74,144 L88,144 L88,128"/>
+                      </g>
+                      <!-- Skeleton (default ON) -->
+                      <g id="hlEspSkel" stroke="#fbbf24" stroke-width="1.3" fill="none" stroke-linecap="round">
+                        <line x1="50" y1="30" x2="50" y2="70"/>
+                        <line x1="34" y1="42" x2="66" y2="42"/>
+                        <line x1="34" y1="42" x2="21" y2="58"/>
+                        <line x1="21" y1="58" x2="17" y2="72"/>
+                        <line x1="66" y1="42" x2="79" y2="58"/>
+                        <line x1="79" y1="58" x2="83" y2="72"/>
+                        <line x1="42" y1="70" x2="37" y2="100"/>
+                        <line x1="37" y1="100" x2="33" y2="130"/>
+                        <line x1="58" y1="70" x2="63" y2="100"/>
+                        <line x1="63" y1="100" x2="67" y2="130"/>
+                        <circle cx="50" cy="36" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="34" cy="42" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="66" cy="42" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="21" cy="58" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="79" cy="58" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="50" cy="70" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="37" cy="100" r="2" fill="#fbbf24" stroke="none"/>
+                        <circle cx="63" cy="100" r="2" fill="#fbbf24" stroke="none"/>
+                      </g>
+                      <!-- Health bar -->
+                      <rect x="5" y="8" width="3.5" height="136" fill="rgba(0,0,0,0.5)" rx="1.5"/>
+                      <rect x="5" y="8" width="3.5" height="95" fill="#22c55e" rx="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SETTINGS -->
+              <div class="hl-s-panel" id="hlPanel-settings">
+                <div class="hl-s-panel-head">Settings</div>
+                <div class="hl-s-panel-sub">General Options</div>
+                <div class="hl-s-divider"></div>
+                <div class="hl-s-generic">
+                  <div class="hl-s-group-lbl">Performance</div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">High FPS Mode</span><div class="hl-toggle on"></div></div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Low Latency</span>  <div class="hl-toggle on"></div></div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Auto Update</span>  <div class="hl-toggle"></div></div>
+                  <div class="hl-s-group-lbl" style="margin-top:7px">Safety</div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Panic Key</span>    <div class="hl-toggle on"></div></div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Stream Proof</span> <div class="hl-toggle on"></div></div>
+                </div>
+              </div>
+
+              <!-- PLAYERS -->
+              <div class="hl-s-panel" id="hlPanel-players">
+                <div class="hl-s-panel-head">Players</div>
+                <div class="hl-s-panel-sub">Player Visibility</div>
+                <div class="hl-s-divider"></div>
+                <div class="hl-s-generic">
+                  <div class="hl-s-cols">
+                    <div>
+                      <div class="hl-s-group-lbl">Display</div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Name Tags</span> <div class="hl-toggle on"></div></div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Health Bar</span><div class="hl-toggle on"></div></div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Distance</span>  <div class="hl-toggle"></div></div>
+                    </div>
+                    <div>
+                      <div class="hl-s-group-lbl">Alerts</div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Footsteps</span><div class="hl-toggle on"></div></div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Aim Alert</span><div class="hl-toggle"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- GADGETS -->
+              <div class="hl-s-panel" id="hlPanel-gadgets">
+                <div class="hl-s-panel-head">Gadgets</div>
+                <div class="hl-s-panel-sub">Item &amp; Loot</div>
+                <div class="hl-s-divider"></div>
+                <div class="hl-s-generic">
+                  <div class="hl-s-cols">
+                    <div>
+                      <div class="hl-s-group-lbl">Items</div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Weapons</span> <div class="hl-toggle on"></div></div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Ammo</span>   <div class="hl-toggle on"></div></div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Med Kits</span><div class="hl-toggle"></div></div>
+                    </div>
+                    <div>
+                      <div class="hl-s-group-lbl">Range</div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Filter Far</span><div class="hl-toggle"></div></div>
+                      <div class="hl-s-row"><span class="hl-s-row-lbl">Show All</span> <div class="hl-toggle on"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RADAR -->
+              <div class="hl-s-panel" id="hlPanel-radar">
+                <div class="hl-s-panel-head">Radar</div>
+                <div class="hl-s-panel-sub">Radar Display</div>
+                <div class="hl-s-divider"></div>
+                <div class="hl-s-generic">
+                  <div class="hl-s-group-lbl">Options</div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Show Radar</span>         <div class="hl-toggle on"></div></div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Rotate w/ Player</span>  <div class="hl-toggle on"></div></div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Show Names</span>         <div class="hl-toggle"></div></div>
+                  <div class="hl-s-row"><span class="hl-s-row-lbl">Show Loot</span>          <div class="hl-toggle"></div></div>
+                </div>
+              </div>
+
+            </div><!-- /hl-s-main -->
+          </div><!-- /hl-settings-frame -->
+        </div><!-- /hl-settings-inner -->
+      </div>
+
+      <!-- ════════════════════════
+           NOTIFICATIONS CARD
+           ════════════════════════ -->
+      <div class="hl-card hl-notifs-card">
+        <div class="hl-notifs-top">
+          <div class="hl-notif">
+            <div class="hl-notif-av">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            </div>
+            <div class="hl-notif-body">
+              <div class="hl-notif-row"><span class="hl-notif-title">Order created</span><span class="hl-notif-time">1 min ago</span></div>
+              <div class="hl-notif-desc">Your order is being processed instantly.</div>
+            </div>
+          </div>
+          <div class="hl-notif">
+            <div class="hl-notif-av green">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div class="hl-notif-body">
+              <div class="hl-notif-row"><span class="hl-notif-title">Key delivered</span><span class="hl-notif-time">1 min ago</span></div>
+              <div class="hl-notif-desc">Your key has been delivered instantly.</div>
+            </div>
+          </div>
+          <div class="hl-notif faded">
+            <div class="hl-notif-av">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="hl-notif-body">
+              <div class="hl-notif-row"><span class="hl-notif-title">User registered</span><span class="hl-notif-time">2 min ago</span></div>
+              <div class="hl-notif-desc">Instant access granted.</div>
+            </div>
+          </div>
+        </div>
+        <div class="hl-label">
+          <h3>Notifications</h3>
+          <p>Get notified when something happens.</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════
+           SUPPORT CARD
+           ════════════════════════ -->
+      <div class="hl-card hl-support-card">
+        <div class="hl-sup-num">24/7</div>
+        <div class="hl-sup-word">SUPPORT</div>
+        <div class="hl-sup-btns">
+          <a href="/support" class="hl-btn hl-btn-primary">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Support Page
+          </a>
+          <a href="https://discord.gg/apexsolutions" target="_blank" rel="noopener" class="hl-btn hl-btn-secondary">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Get Support
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+
+  /* ═══════════════════════════════════════════════
+     GLOBE — continent-accurate dots + drag-to-spin
+  ═══════════════════════════════════════════════ */
+  const canvas = document.getElementById('hlGlobe');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 200, H = 200;
+  canvas.width = W; canvas.height = H;
+  const cx = W/2, cy = H/2, R = 76;
+
+  /* Land mask — approximate continental regions */
+  function isLand(lat, lon) {
+    while (lon > 180)  lon -= 360;
+    while (lon < -180) lon += 360;
+    // ── Major ocean exclusions ──
+    if (lat>51&&lat<66&&lon>-96&&lon<-77) return false;   // Hudson Bay
+    if (lat>17&&lat<31&&lon>-97&&lon<-82) return false;   // Gulf of Mexico
+    if (lat>9&&lat<23&&lon>-88&&lon<-60)  return false;   // Caribbean Sea
+    if (lat>30&&lat<47&&lon>5&&lon<17)    return false;   // W Mediterranean
+    if (lat>30&&lat<43&&lon>17&&lon<30)   return false;   // E Mediterranean
+    if (lat>12&&lat<30&&lon>33&&lon<44)   return false;   // Red Sea
+    if (lat>23&&lat<31&&lon>47&&lon<57)   return false;   // Persian Gulf
+    if (lat>36&&lat<48&&lon>49&&lon<55)   return false;   // Caspian Sea
+    if (lat>40&&lat<47&&lon>28&&lon<42)   return false;   // Black Sea
+    if (lat>-5&&lat<16&&lon>102&&lon<122) return false;   // South China Sea
+    // ── Land ──
+    if (lat>59&&lat<84&&lon>-58&&lon<-17) return true;    // Greenland
+    if (lat>63&&lat<67&&lon>-25&&lon<-13) return true;    // Iceland
+    if (lat>49&&lat<59&&lon>-11&&lon<2)   return true;    // British Isles
+    if (lat>54&&lat<72&&lon>-169&&lon<-130) return true;  // Alaska
+    if (lat>49&&lat<73&&lon>-140&&lon<-53) return true;   // Canada
+    if (lat>24&&lat<50&&lon>-125&&lon<-66) return true;   // USA
+    if (lat>13&&lat<32&&lon>-118&&lon<-86) return true;   // Mexico
+    if (lat>7&&lat<18&&lon>-92&&lon<-75)  return true;    // Central America
+    if (lat>19&&lat<23&&lon>-85&&lon<-73) return true;    // Cuba
+    if (lat>-56&&lat<13&&lon>-82&&lon<-34) return true;   // South America
+    if (lat>55&&lat<72&&lon>4&&lon<32)    return true;    // Scandinavia
+    if (lat>46&&lat<56&&lon>-5&&lon<24)   return true;    // C Europe
+    if (lat>36&&lat<48&&lon>-9&&lon<30)   return true;    // S Europe
+    if (lat>36&&lat<42&&lon>26&&lon<45)   return true;    // Turkey
+    if (lat>60&&lat<72&&lon>24&&lon<38)   return true;    // Finland/Baltics
+    if (lat>18&&lat<38&&lon>-6&&lon<37)   return true;    // N Africa
+    if (lat>-5&&lat<18&&lon>-18&&lon<52)  return true;    // W/C Africa
+    if (lat>-35&&lat<-4&&lon>11&&lon<52)  return true;    // S/E Africa
+    if (lat>-26&&lat<-12&&lon>43&&lon<51) return true;    // Madagascar
+    if (lat>12&&lat<38&&lon>33&&lon<62)   return true;    // Arabia / Middle East
+    if (lat>50&&lat<78&&lon>28&&lon<180)  return true;    // Russia
+    if (lat>55&&lat<68&&lon>-180&&lon<-163) return true;  // Chukotka
+    if (lat>36&&lat<50&&lon>50&&lon<90)   return true;    // Central Asia
+    if (lat>6&&lat<30&&lon>66&&lon<92)    return true;    // India
+    if (lat>0&&lat<30&&lon>92&&lon<110)   return true;    // Indochina
+    if (lat>18&&lat<55&&lon>72&&lon<145)  return true;    // China / E Asia
+    if (lat>-10&&lat<7&&lon>94&&lon<145)  return true;    // SE Asia islands
+    if (lat>4&&lat<20&&lon>117&&lon<128)  return true;    // Philippines
+    if (lat>30&&lat<46&&lon>125&&lon<148) return true;    // Japan / Korea
+    if (lat>-44&&lat<-10&&lon>113&&lon<154) return true;  // Australia
+    if (lat>-47&&lat<-34&&lon>166&&lon<178) return true;  // New Zealand
+    if (lat<-67) return true;                             // Antarctica
+    return false;
+  }
+
+  /* Generate dots — land + sparse ocean for sphere shape */
+  const PHI = Math.PI * (3 - Math.sqrt(5));
+  const LAND = [], SEA = [];
+  const N = 8000;
+
+  for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N-1)) * 2;
+    const r = Math.sqrt(1 - y*y);
+    const t = PHI * i;
+    const bx = Math.cos(t)*r, bz = Math.sin(t)*r;
+    const lat = Math.asin(y) * 180/Math.PI;
+    const lon = Math.atan2(bz, bx) * 180/Math.PI;
+    if (isLand(lat, lon)) {
+      LAND.push({ bx, by: y, bz });
+    } else if (i % 6 === 0) {
+      SEA.push({ bx, by: y, bz });    // sparse ocean
+    }
+  }
+
+  /* Rotation state */
+  let aY = 0, aX = 0.15, tY = 0, tX = 0.15;
+  let drag = false, lx = 0, ly = 0, vx = 0, vy = 0, auto = true;
+  const wrap = document.getElementById('hlGlobeWrap');
+
+  wrap.addEventListener('mousedown', e => {
+    drag = true; auto = false; lx = e.clientX; ly = e.clientY; vx = vy = 0;
+  });
+  wrap.addEventListener('touchstart', e => {
+    drag = true; auto = false;
+    lx = e.touches[0].clientX; ly = e.touches[0].clientY; vx = vy = 0;
+  }, { passive: true });
+
+  function onMove(e) {
+    if (!drag) return;
+    const px = e.touches ? e.touches[0].clientX : e.clientX;
+    const py = e.touches ? e.touches[0].clientY : e.clientY;
+    vy = (py - ly) * 0.004; vx = (px - lx) * 0.004;
+    tX += vy; tY += vx; lx = px; ly = py;
+  }
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, { passive: false });
+
+  function onUp() {
+    drag = false;
+    setTimeout(() => { auto = true; }, 2000);
+  }
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+
+  function project(pts, cosX, sinX, cosY, sinY) {
+    return pts.map(p => {
+      const x1 = p.bx*cosY - p.bz*sinY;
+      const z1 = p.bx*sinY + p.bz*cosY;
+      const y2 = p.by*cosX - z1*sinX;
+      const z2 = p.by*sinX + z1*cosX;
+      return { sx: cx + x1*R, sy: cy + y2*R, z: z2 };
+    }).sort((a,b) => a.z - b.z);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (!drag) {
+      if (auto) tY += 0.004;
+      vx *= 0.93; vy *= 0.93;
+      tX += vy; tY += vx;
+    }
+    aX += (tX - aX) * 0.1;
+    aY += (tY - aY) * 0.1;
+
+    const cosX = Math.cos(aX), sinX = Math.sin(aX);
+    const cosY = Math.cos(aY), sinY = Math.sin(aY);
+
+    /* Ocean dots — very faint */
+    project(SEA, cosX, sinX, cosY, sinY).forEach(p => {
+      const d = (p.z + 1) / 2;
+      if (d < 0.1) return;
+      ctx.beginPath();
+      ctx.arc(p.sx, p.sy, d * 0.55 + 0.1, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(120,140,255,' + (d * 0.06).toFixed(2) + ')';
+      ctx.fill();
+    });
+
+    /* Land dots — bright white */
+    project(LAND, cosX, sinX, cosY, sinY).forEach(p => {
+      const d = (p.z + 1) / 2;
+      if (d < 0.08) return;
+      ctx.beginPath();
+      ctx.arc(p.sx, p.sy, d * 1.6 + 0.2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,' + Math.min(0.95, d * 0.9 + 0.05).toFixed(2) + ')';
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* ═══════════════════════════════════════════════
+     SETTINGS — tab switching
+  ═══════════════════════════════════════════════ */
+  document.querySelectorAll('#hlSTabs .hl-s-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#hlSTabs .hl-s-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.hl-s-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const panel = document.getElementById('hlPanel-' + tab.dataset.panel);
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  /* ═══════════════════════════════════════════════
+     TOGGLES — with ESP player model updates
+  ═══════════════════════════════════════════════ */
+  const espMap = {
+    box2d:  'hlEspBox2d',
+    box3d:  'hlEspBox3d',
+    corner: 'hlEspCorner',
+    skel:   'hlEspSkel'
+  };
+
+  document.querySelectorAll('.hl-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('on');
+      const esp = toggle.dataset.esp;
+      if (esp && espMap[esp]) {
+        const el = document.getElementById(espMap[esp]);
+        if (el) el.style.display = toggle.classList.contains('on') ? '' : 'none';
+      }
+    });
+  });
+
+})();
+</script>
